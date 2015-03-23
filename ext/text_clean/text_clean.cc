@@ -4,6 +4,9 @@
 #include <string.h>
 #include <assert.h>
 
+static rb_encoding* u8_enc;
+static rb_encoding* bin_enc;
+
 /** Transforms text such as the following:
  *
  *   And behold, I said, "This is no good!"
@@ -88,7 +91,7 @@ static VALUE text_clean(VALUE self, VALUE text, VALUE ending) {
 }
 
 extern "C"
-void Init_text_clean_ext() {
+void Init_text_clean() {
     VALUE rb_mText = rb_define_module("TextClean");
 
     u8_enc = rb_utf8_encoding();

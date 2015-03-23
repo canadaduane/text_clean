@@ -1,7 +1,7 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'text_clean'
+require 'text_clean/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "text_clean"
@@ -18,9 +18,10 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib", "ext"]
 
-  spec.extensions    = %w[ext/extconf.rb]
+  spec.extensions    = %w[ext/text_clean/extconf.rb]
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake", "~> 10.3"
+  spec.add_development_dependency "rake-compiler"
   spec.add_development_dependency "byebug", "~> 3.4"
 end
