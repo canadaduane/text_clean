@@ -2,4 +2,4 @@
 
 require "text_clean"
 
-puts TextClean.clean(STDIN.read, "\n")
+puts TextClean.clean(ARGF.read, "\n")
