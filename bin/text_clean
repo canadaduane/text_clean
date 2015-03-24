@@ -2,9 +2,4 @@
 
 require "text_clean"
 
-# require "readline"
-# Readline.input = IO.new(IO.sysopen("/dev/tty", "r+"))
-
-# require "byebug"; byebug
-
 puts TextClean.clean(STDIN.read, "\n")
