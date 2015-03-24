@@ -26,16 +26,15 @@ size_t text_clean_cstr(char* text, long len, char line_sep)
   char* eos = text + (size_t)len;
   char* read;
   char* write = text;
-  uint8_t should_join_next_line = false,
-          just_added_space = true,   // prevent prefix spaces
+  uint8_t just_added_space = true,   // prevent prefix spaces
           just_added_period = false;
   for (read = text; read < eos; read++) {
     char c = *read;
     if (c >= 'A' && c <= 'Z') {
       // Change upper case to lowercase
       c += 32;
-    } else if (c == '\n' || c == '\t' || c == ',' || c == '&' || c == '/') {
-      // Change newlines to spaces (i.e. both count as whitespace)
+    } else if (c == '\t' || c == ',' || c == '&' || c == '/') {
+      // Change inconsequential punctuation to spaces (i.e. all count as whitespace)
       c = ' ';
     } else if (c == '?' || c == '!' || c == ':' || c == ';') {
       // Change exclamation, question marks to periods (i.e. sentence boundaries)
@@ -43,17 +42,33 @@ size_t text_clean_cstr(char* text, long len, char line_sep)
     }
 
     if (c == '-') {
-      should_join_next_line = true;
-    } else if (should_join_next_line && c == ' ') {
-      // ignore whitespace after a dash (i.e. including newlines, which is the
-      // most common case because words that are broken by syllables are dashed)
+      // double dash?
+      if (*(read + 1) == '-') {
+        *write++ = ' ';
+        read++;
+      } else {
+        // scan ahead to see if this is a hyphen at the end of the line
+        char* scan_ahead;
+        for (scan_ahead = read + 1; scan_ahead < eos; scan_ahead++) {
+          char s = *scan_ahead;
+          if (s != '\t' && s != ' ') {
+            if (s == '\n') {
+              // this is a hyphenated line join, so join the lines
+              read = scan_ahead;
+              break;
+            } else {
+              // not a line join
+              break;
+            }
+          }
+        }
+      }
     } else if (c == '.' && !just_added_period) {
       // erase space before period
       if (just_added_space) write--;
       *write++ = line_sep;
       just_added_period = true;
       just_added_space = false;
-      should_join_next_line = false;
     } else if (c == ' ' && !just_added_space && !just_added_period) {
       *write++ = ' ';
       just_added_space = true;
@@ -62,7 +77,6 @@ size_t text_clean_cstr(char* text, long len, char line_sep)
       *write++ = c;
       just_added_space = false;
       just_added_period = false;
-      should_join_next_line = false;
     }
   }
   // erase space at end of text

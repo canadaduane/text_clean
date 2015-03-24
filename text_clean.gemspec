@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib", "ext"]
 
-  spec.extensions    = %w[ext/text_clean/extconf.rb]
+  spec.extensions    = %w[ext/extconf.rb]
 
   spec.add_dependency "byebug", "~> 3.4"
 
