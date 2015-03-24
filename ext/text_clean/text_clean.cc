@@ -45,8 +45,12 @@ size_t text_clean_cstr(char* text, long len, char line_sep)
     if (c == '-') {
       // double dash?
       if (*(read + 1) == '-') {
-        *write++ = ' ';
-        read++;
+        if (!just_added_space) {
+          *write++ = ' ';
+          read++;
+          just_added_space = true;
+          just_added_period = false;
+        }
       } else {
         // scan ahead to see if this is a hyphen at the end of the line
         char* scan_ahead;
