@@ -52,7 +52,7 @@ size_t text_clean_cstr(char* text, long len, char line_sep)
           just_added_period = false;
         }
       } else {
-        // scan ahead to see if this is a hyphen at the end of the line
+        // scan ahead to see if this hyphen is at the end of the line
         char* scan_ahead;
         for (scan_ahead = read + 1; scan_ahead < eos; scan_ahead++) {
           char s = *scan_ahead;
@@ -74,11 +74,11 @@ size_t text_clean_cstr(char* text, long len, char line_sep)
       *write++ = line_sep;
       just_added_period = true;
       just_added_space = false;
-    } else if (c == ' ' && !just_added_space && !just_added_period) {
+    } else if ((c == ' ' || c == '\n') && !just_added_space && !just_added_period) {
       *write++ = ' ';
       just_added_space = true;
       just_added_period = false;
-    } else if (c >= 'a' && c <= 'z') {
+    } else if (c == '\'' || (c >= 'a' && c <= 'z')) {
       *write++ = c;
       just_added_space = false;
       just_added_period = false;

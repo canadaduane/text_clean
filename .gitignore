@@ -1,0 +1,5 @@
+Gemfile.lock
+lib/text_clean/text_clean.bundle
+lib/text_clean/text_clean.so
+*.gem
+tmp/
