@@ -55,6 +55,7 @@ size_t text_clean_cstr(char* text, long len, char line_sep)
             if (s == '\n') {
               // this is a hyphenated line join, so join the lines
               read = scan_ahead;
+              printf("hyphenatedd\n");
               break;
             } else {
               // not a line join
