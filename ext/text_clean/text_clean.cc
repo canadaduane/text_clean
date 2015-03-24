@@ -27,13 +27,13 @@ size_t text_clean_cstr(char* text, long len, char line_sep)
   char* read;
   char* write = text;
   uint8_t just_added_space = true,   // prevent prefix spaces
-          just_added_period = false;
+          just_added_line_sep = false;
   for (read = text; read < eos; read++) {
     char c = *read;
     if (c >= 'A' && c <= 'Z') {
       // Change upper case to lowercase
       c += 32;
-    } else if (c == '\t' || c == ',' || c == '&' || c == '/') {
+    } else if (c == '\t' || c == '_' || c == ',' || c == '&' || c == '/') {
       // Change inconsequential punctuation to spaces (i.e. all count as whitespace)
       c = ' ';
     } else if (c == '?' || c == '!' || c == ':' || c == ';') {
@@ -45,11 +45,11 @@ size_t text_clean_cstr(char* text, long len, char line_sep)
     if (c == '-') {
       // double dash?
       if (*(read + 1) == '-') {
-        if (!just_added_space) {
+        if (!just_added_space && !just_added_line_sep) {
           *write++ = ' ';
           read++;
           just_added_space = true;
-          just_added_period = false;
+          just_added_line_sep = false;
         }
       } else {
         // scan ahead to see if this hyphen is at the end of the line
@@ -68,20 +68,32 @@ size_t text_clean_cstr(char* text, long len, char line_sep)
           }
         }
       }
-    } else if (c == '.' && !just_added_period) {
+    } else if (c == '.' && !just_added_line_sep) {
+      // look-behind and see if this is an abbreviation
+      if (write - text >= 2) {
+        char a = *(write - 2);
+        char b = *(write - 1);
+
+        // we're just checking for single-letter abbrevs, so see if 2-chars-behind is whitespace
+        if (a == ' ' || a == '.' || a == '\n' || a == '\t') {
+          *write++ = '.';
+          continue;
+        }
+      }
+
       // erase space before period
       if (just_added_space) write--;
       *write++ = line_sep;
-      just_added_period = true;
+      just_added_line_sep = true;
       just_added_space = false;
-    } else if ((c == ' ' || c == '\n') && !just_added_space && !just_added_period) {
+    } else if ((c == ' ' || c == '\n') && !just_added_space && !just_added_line_sep) {
       *write++ = ' ';
       just_added_space = true;
-      just_added_period = false;
+      just_added_line_sep = false;
     } else if (c == '\'' || (c >= 'a' && c <= 'z')) {
       *write++ = c;
       just_added_space = false;
-      just_added_period = false;
+      just_added_line_sep = false;
     }
   }
   // erase space at end of text
