@@ -76,4 +76,8 @@ describe TextClean do
   it "keeps abbreviated single letters that follow other abbreviations without spaces" do
     clean_eq("a mr t.j. sawyer", "a mr t.j. sawyer")
   end
+
+  it "handles double dash on its own" do
+    clean_eq("And it has words.\n--\nOk.", "and it has words\nok")
+  end
 end
